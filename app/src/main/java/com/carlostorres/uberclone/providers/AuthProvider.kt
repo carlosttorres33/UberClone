@@ -18,4 +18,19 @@ class AuthProvider {
         return auth.currentUser?.uid ?: ""
     }
 
+    fun login(email: String, password : String) : Task<AuthResult> = auth.signInWithEmailAndPassword(email, password)
+
+    fun existSession() : Boolean{
+
+        var exist = false
+        if (auth.currentUser != null){
+
+            exist =true
+
+        }
+
+        return  exist
+
+    }
+
 }

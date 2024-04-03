@@ -68,7 +68,7 @@ class RegisterActivity : AppCompatActivity() {
 
                     clientProvider.create(client).addOnCompleteListener {
                         if (it.isSuccessful){
-                            Toast.makeText(this@RegisterActivity, "Registro exitoso", Toast.LENGTH_SHORT).show()
+                            goToMap()
                         } else {
                             Toast.makeText(this@RegisterActivity, "Error almacenando datos ${it.exception.toString()}", Toast.LENGTH_SHORT).show()
                             Log.d("Firebase", it.exception.toString())
@@ -123,5 +123,14 @@ class RegisterActivity : AppCompatActivity() {
 
     }
 
+    fun goToMap(){
+
+        val intent = Intent (this, MapActivity::class.java)
+
+        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+
+        startActivity(intent)
+
+    }
 
 }

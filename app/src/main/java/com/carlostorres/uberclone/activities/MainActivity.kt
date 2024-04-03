@@ -3,14 +3,16 @@ package com.carlostorres.uberclone.activities
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.WindowManager
 import android.widget.Toast
 import com.carlostorres.uberclone.databinding.ActivityMainBinding
+import com.carlostorres.uberclone.providers.AuthProvider
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding : ActivityMainBinding
-
+    val authProvider = AuthProvider()
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -39,8 +41,25 @@ class MainActivity : AppCompatActivity() {
         val password = binding.textFieldPassword.text.toString()
 
         if (isValidForm(email, password)){
-            Toast.makeText(this, "Formulario Válido", Toast.LENGTH_SHORT).show()
+            authProvider.login(email, password).addOnCompleteListener {
+                if (it.isSuccessful){
+                    goToMap()
+                }else{
+                    Toast.makeText(this@MainActivity, "Error iniciando Sesion", Toast.LENGTH_SHORT).show()
+                    Log.d("Firebase", it.exception.toString())
+                }
+            }
         }
+
+    }
+
+    fun goToMap(){
+
+        val intent = Intent (this, MapActivity::class.java)
+
+        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+
+        startActivity(intent)
 
     }
 
@@ -63,6 +82,16 @@ class MainActivity : AppCompatActivity() {
         val i = Intent(this, RegisterActivity::class.java)
 
         startActivity(i)
+    }
+
+    override fun onStart() {
+
+        super.onStart()
+
+        if (authProvider.existSession()){
+            goToMap()
+        }
+
     }
 
 }
