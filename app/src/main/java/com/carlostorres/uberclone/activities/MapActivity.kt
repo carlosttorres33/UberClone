@@ -25,17 +25,21 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.android.gms.maps.model.Marker
+import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.api.model.RectangularBounds
 import com.google.android.libraries.places.api.net.PlacesClient
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener
+import com.google.firebase.firestore.GeoPoint
 import com.google.maps.android.SphericalUtil
+import org.imperiumlabs.geofirestore.callbacks.GeoQueryEventListener
 import java.lang.Exception
 
 class MapActivity : AppCompatActivity(), OnMapReadyCallback, Listener {
@@ -60,6 +64,8 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, Listener {
     private var originLatLng: LatLng? = null
     private var destinationLatLng: LatLng? = null
     private var isLocationEnabled = false
+
+    private val driverMarkers = ArrayList<Marker>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -121,7 +127,94 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, Listener {
 
         }
 
+    private fun getNearbyDrivers(){
 
+        if (myLocationLatLng == null){
+            return
+        }
+
+        geoProvider.getNearbyDrivers(myLocationLatLng!!, 15.0).addGeoQueryEventListener(object : GeoQueryEventListener{
+
+            override fun onKeyEntered(documentID: String, location: GeoPoint) {
+                for (marker in driverMarkers){
+
+                    if (marker.tag != null){
+
+                        if (marker.tag == documentID){
+
+                            return
+
+                        }
+
+                    }
+
+                }
+
+                val driverLatLng = LatLng(location.latitude, location.longitude)
+
+                val marker = googleMap?.addMarker(
+                    MarkerOptions().position(driverLatLng).title("Conductor Disponible").icon(
+                        BitmapDescriptorFactory.fromResource(R.drawable.uber_car)
+                    )
+                )
+
+                marker?.tag = documentID
+
+                driverMarkers.add(marker!!)
+
+            }
+
+            override fun onKeyExited(documentID: String) {
+
+                for (marker in driverMarkers){
+
+                    if (marker.tag != null){
+
+                        if (marker.tag == documentID){
+
+                            marker.remove()
+
+                            driverMarkers.remove(marker)
+
+                            return
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+            override fun onKeyMoved(documentID: String, location: GeoPoint) {
+
+                for (marker in driverMarkers){
+
+                    if (marker.tag != null){
+
+                        if (marker.tag == documentID){
+
+                            marker.position = LatLng(location.latitude, location.longitude)
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+            override fun onGeoQueryError(exception: Exception) {
+
+            }
+
+            override fun onGeoQueryReady() {
+
+            }
+
+        })
+
+    }
 
     private fun connectDriver(){
 
@@ -221,6 +314,8 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, Listener {
                     CameraPosition.Builder().target(myLocationLatLng!!).zoom(15f).build()
                 )
             )
+
+            getNearbyDrivers()
 
             limitSearch()
 
