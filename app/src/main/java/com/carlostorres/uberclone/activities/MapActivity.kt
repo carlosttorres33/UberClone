@@ -1,6 +1,7 @@
 package com.carlostorres.uberclone.activities
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Resources
 import android.location.Geocoder
@@ -10,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.WindowManager
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import com.carlostorres.uberclone.R
@@ -48,9 +50,9 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, Listener {
 
     private lateinit var binding: ActivityMapBinding
     private var googleMap: GoogleMap? = null
+    private var easyWayLocation: EasyWayLocation? = null
     private var myLocationLatLng: LatLng? = null
 
-    private var easyWayLocation: EasyWayLocation? = null
 
     private var markerDriver: Marker? = null
 
@@ -103,6 +105,10 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, Listener {
         )
 
         startGooglePlaces()
+
+        binding.btnRequestTrip.setOnClickListener {
+            goToTripInfo()
+        }
 
     }
 
@@ -266,6 +272,21 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, Listener {
         easyWayLocation?.endUpdates()
         easyWayLocation?.startLocation()
 
+
+    }
+
+    private fun goToTripInfo(){
+
+        if (originLatLng != null && destinationLatLng != null){
+
+            val intent = Intent(this, TripInfoActivity::class.java)
+            startActivity(intent)
+
+        }else{
+
+            Toast.makeText(this, "Debes seleccionar el origen y el destino", Toast.LENGTH_LONG).show()
+
+        }
 
     }
 
@@ -444,7 +465,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, Listener {
             )
         )
 
-        autocompleteDestination?.setHint("Lugar de recogida")
+        autocompleteDestination?.setHint("Destino")
         autocompleteDestination?.setCountries("MX")
         autocompleteDestination?.setOnPlaceSelectedListener(object:PlaceSelectionListener{
 
