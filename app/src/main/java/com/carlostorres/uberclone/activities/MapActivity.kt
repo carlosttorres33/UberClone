@@ -14,8 +14,10 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import com.carlostorres.uberclone.R
 import com.carlostorres.uberclone.databinding.ActivityMapBinding
+import com.carlostorres.uberclone.models.DriverLocation
 import com.carlostorres.uberclone.providers.AuthProvider
 import com.carlostorres.uberclone.providers.GeoProvider
+import com.carlostorres.uberclone.utils.CarMoveAnim
 import com.example.easywaylocation.EasyWayLocation
 import com.example.easywaylocation.Listener
 import com.google.android.gms.common.api.Status
@@ -66,6 +68,8 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, Listener {
     private var isLocationEnabled = false
 
     private val driverMarkers = ArrayList<Marker>()
+    private val driversLocation = ArrayList<DriverLocation>()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -127,12 +131,28 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, Listener {
 
         }
 
+    private fun getPositionDriver( id: String) : Int {
+
+        var position = 0
+
+        for (i in driversLocation.indices){
+            if (id == driversLocation[i].id){
+
+                position = i
+
+                break
+            }
+        }
+
+        return position
+
+    }
+
     private fun getNearbyDrivers(){
 
         if (myLocationLatLng == null){
             return
         }
-
         geoProvider.getNearbyDrivers(myLocationLatLng!!, 15.0).addGeoQueryEventListener(object : GeoQueryEventListener{
 
             override fun onKeyEntered(documentID: String, location: GeoPoint) {
@@ -162,6 +182,11 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, Listener {
 
                 driverMarkers.add(marker!!)
 
+                val dLocation = DriverLocation()
+                dLocation.id = documentID
+
+                driversLocation.add(dLocation)
+
             }
 
             override fun onKeyExited(documentID: String) {
@@ -175,6 +200,8 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, Listener {
                             marker.remove()
 
                             driverMarkers.remove(marker)
+
+                            driversLocation.removeAt(getPositionDriver(documentID))
 
                             return
 
@@ -190,11 +217,29 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, Listener {
 
                 for (marker in driverMarkers){
 
+                    val start = LatLng(location.latitude, location.longitude)
+                    var end : LatLng? = null
+                    val position = getPositionDriver(marker.tag.toString())
+
                     if (marker.tag != null){
 
                         if (marker.tag == documentID){
 
-                            marker.position = LatLng(location.latitude, location.longitude)
+                            if (driversLocation[position].latlng != null ){
+
+                                end = driversLocation[position].latlng
+
+                            }
+
+                            driversLocation[position].latlng = LatLng(location.latitude, location.longitude)
+
+                            if (end != null){
+
+                                CarMoveAnim.carAnim(marker, end, start)
+
+                            }
+
+                            //marker.position = LatLng(location.latitude, location.longitude)
 
                         }
 
