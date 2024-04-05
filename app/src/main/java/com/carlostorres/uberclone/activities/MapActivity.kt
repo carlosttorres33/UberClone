@@ -3,19 +3,15 @@ package com.carlostorres.uberclone.activities
 import android.Manifest
 import android.content.pm.PackageManager
 import android.content.res.Resources
-import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.graphics.drawable.Drawable
+import android.location.Geocoder
 import android.location.Location
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.view.View
 import android.view.WindowManager
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import com.carlostorres.uberclone.R
 import com.carlostorres.uberclone.databinding.ActivityMapBinding
 import com.carlostorres.uberclone.providers.AuthProvider
@@ -29,13 +25,10 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.BitmapDescriptor
-import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.android.gms.maps.model.Marker
-import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.api.model.RectangularBounds
@@ -43,6 +36,7 @@ import com.google.android.libraries.places.api.net.PlacesClient
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener
 import com.google.maps.android.SphericalUtil
+import java.lang.Exception
 
 class MapActivity : AppCompatActivity(), OnMapReadyCallback, Listener {
 
@@ -141,6 +135,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, Listener {
 
         googleMap = map
         googleMap?.uiSettings?.isZoomControlsEnabled = true
+        onCameraMove()
 //        easyWayLocation?.startLocation()
 
         if (ActivityCompat.checkSelfPermission(
@@ -172,6 +167,43 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, Listener {
 
     }
 
+    private fun onCameraMove(){
+
+        googleMap?.setOnCameraIdleListener {
+
+            try {
+
+                val geocoder = Geocoder(this)
+                originLatLng = googleMap?.cameraPosition?.target
+
+                if (originLatLng != null){
+
+                    val addressList = geocoder.getFromLocation(originLatLng?.latitude!!, originLatLng?.longitude!!, 1)
+
+                    if (addressList!!.size > 0){
+
+                        val city = addressList!![0].locality
+                        val country = addressList[0].countryName
+                        val address = addressList[0].getAddressLine(0)
+
+                        originName = "$address $city"
+
+                        autocompleteOrigin?.setText(originName)
+
+                    }
+
+                }
+
+            } catch (e: Exception) {
+
+                Log.d("Error", "${e.message}")
+
+            }
+
+        }
+
+    }
+
     override fun locationOn() {
 
     }
@@ -180,15 +212,16 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, Listener {
     override fun currentLocation(location: Location) {
         myLocationLatLng = LatLng(location.latitude, location.longitude)
 
-        googleMap?.moveCamera(
-            CameraUpdateFactory.newCameraPosition(
-                CameraPosition.Builder().target(myLocationLatLng!!).zoom(17f).build()
-            )
-        )
-
         if (!isLocationEnabled){
 
             isLocationEnabled = true
+
+            googleMap?.moveCamera(
+                CameraUpdateFactory.newCameraPosition(
+                    CameraPosition.Builder().target(myLocationLatLng!!).zoom(15f).build()
+                )
+            )
+
             limitSearch()
 
         }
