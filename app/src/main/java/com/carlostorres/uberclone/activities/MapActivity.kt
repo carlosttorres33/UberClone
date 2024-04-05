@@ -280,6 +280,14 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, Listener {
         if (originLatLng != null && destinationLatLng != null){
 
             val intent = Intent(this, TripInfoActivity::class.java)
+
+            intent.putExtra("origin", originName)
+            intent.putExtra("destination", destinationName)
+            intent.putExtra("origin_lat", originLatLng?.latitude)
+            intent.putExtra("origin_lng", originLatLng?.longitude)
+            intent.putExtra("destination_lat", destinationLatLng?.latitude)
+            intent.putExtra("destination_lng", destinationLatLng?.longitude)
+
             startActivity(intent)
 
         }else{
