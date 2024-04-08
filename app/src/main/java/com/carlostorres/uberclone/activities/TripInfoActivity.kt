@@ -190,6 +190,19 @@ class TripInfoActivity : AppCompatActivity(), OnMapReadyCallback, Listener, Dire
         polyLineDetailsArray: ArrayList<PolyLineDataBean>
     ) {
 
+        var distance = polyLineDetailsArray[1].distance.toDouble() //Mts
+        var time = polyLineDetailsArray[1].time.toDouble()  //Seg
+
+        distance = if (distance < 1000.0) 1000.0 else distance   //Si es menos de 1km se pone por defecto de 1km
+        time = if (time < 60.0) 60.0 else time
+
+        distance /= 1000
+        time /= 60
+
+        val timeString = String.format("%.2f", time)
+
+        binding.tvTimeAndDistance.text = "${String.format("%.2f", time).replace(".", ":")} minutos - ${String.format("%.3f", distance)} Km "
+
         directionUtil.drawPath(WAY_POINT_TAG)
 
     }
