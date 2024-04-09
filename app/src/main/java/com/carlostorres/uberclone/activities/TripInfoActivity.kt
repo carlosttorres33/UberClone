@@ -8,6 +8,8 @@ import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import com.carlostorres.uberclone.R
 import com.carlostorres.uberclone.databinding.ActivityTripInfoBinding
+import com.carlostorres.uberclone.models.Price
+import com.carlostorres.uberclone.providers.ConfigProvider
 import com.example.easywaylocation.EasyWayLocation
 import com.example.easywaylocation.Listener
 import com.example.easywaylocation.draw_path.DirectionUtil
@@ -24,6 +26,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
+import kotlin.math.min
 
 class TripInfoActivity : AppCompatActivity(), OnMapReadyCallback, Listener, DirectionUtil.DirectionCallBack {
 
@@ -48,6 +51,8 @@ class TripInfoActivity : AppCompatActivity(), OnMapReadyCallback, Listener, Dire
 
     private var markerOrigin : Marker? = null
     private var markerDestination : Marker? = null
+
+    private var configProvider = ConfigProvider()
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -90,6 +95,30 @@ class TripInfoActivity : AppCompatActivity(), OnMapReadyCallback, Listener, Dire
 
             finish()
 
+        }
+
+    }
+
+    private fun getPrices(distance: Double, time: Double){
+
+        configProvider.getPrices().addOnSuccessListener { document ->
+
+            if (document.exists()){
+
+                val prices = document.toObject(Price::class.java)  //Obtenemos el documento completo con su información
+
+                val totalDistance = distance * prices?.km!!  //valor por km
+                val totalTime = time * prices?.min!!  //valor por min
+
+                var total = totalDistance + totalTime  //Total a pagar
+                total = if (total < 5.0) prices?.minValue!! else total
+
+                var minTotal = total - prices.difference!!  //Al total se le restan 2
+                var maxTotal = total + prices.difference!!  //Al total se le suman 2
+
+                binding.tvPrice.text = "$ ${String.format("%.2f", minTotal)} - $ ${String.format("%.2f", maxTotal)}"
+
+            }
         }
 
     }
@@ -199,7 +228,7 @@ class TripInfoActivity : AppCompatActivity(), OnMapReadyCallback, Listener, Dire
         distance /= 1000
         time /= 60
 
-        val timeString = String.format("%.2f", time)
+        getPrices(distance, time)
 
         binding.tvTimeAndDistance.text = "${String.format("%.2f", time).replace(".", ":")} minutos - ${String.format("%.3f", distance)} Km "
 
