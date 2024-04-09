@@ -78,4 +78,7 @@ dependencies {
     implementation 'com.github.prabhat1707:EasyWayLocation:2.4'
     implementation 'com.github.imperiumlabs:GeoFirestore-Android:v1.4.0'
 
+    //Lottie animations
+    implementation 'com.airbnb.android:lottie:5.2.0'
+
 }

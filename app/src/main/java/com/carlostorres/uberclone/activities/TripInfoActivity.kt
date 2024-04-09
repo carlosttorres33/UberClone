@@ -1,10 +1,12 @@
 package com.carlostorres.uberclone.activities
 
+import android.content.Intent
 import android.content.res.Resources
 import android.location.Location
 import android.os.Bundle
 import android.util.Log
 import android.view.WindowManager
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.carlostorres.uberclone.R
 import com.carlostorres.uberclone.databinding.ActivityTripInfoBinding
@@ -94,6 +96,33 @@ class TripInfoActivity : AppCompatActivity(), OnMapReadyCallback, Listener, Dire
         binding.ivBack.setOnClickListener {
 
             finish()
+
+        }
+
+        binding.btnConfirmRequest.setOnClickListener {
+            goToSearchDriver()
+        }
+
+    }
+
+    private fun goToSearchDriver(){
+
+        if (originLatLng != null && destinationLatLng != null){
+
+            val intent = Intent(this, SearchActivity::class.java)
+
+            intent.putExtra("origin", extraOriginName)
+            intent.putExtra("destination", extraDestinationName)
+            intent.putExtra("origin_lat", originLatLng?.latitude)
+            intent.putExtra("origin_lng", originLatLng?.longitude)
+            intent.putExtra("destination_lat", destinationLatLng?.latitude)
+            intent.putExtra("destination_lng", destinationLatLng?.longitude)
+
+            startActivity(intent)
+
+        }else{
+
+            Toast.makeText(this, "Debes seleccionar el origen y el destino", Toast.LENGTH_LONG).show()
 
         }
 
