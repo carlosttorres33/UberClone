@@ -1,6 +1,8 @@
 package com.carlostorres.uberclone.activities
 
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.WindowManager
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -15,10 +17,13 @@ import com.carlostorres.uberclone.providers.BookingProvider
 import com.carlostorres.uberclone.providers.GeoProvider
 import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.firestore.GeoPoint
+import com.google.firebase.firestore.ListenerRegistration
+import com.google.firebase.firestore.toObject
 import org.imperiumlabs.geofirestore.callbacks.GeoQueryEventListener
 
 class SearchActivity : AppCompatActivity() {
 
+    private var listenerBooking : ListenerRegistration? = null
     private lateinit var binding : ActivitySearchBinding
 
     private var extraOriginName = ""
@@ -35,6 +40,7 @@ class SearchActivity : AppCompatActivity() {
 
     private val geoProvider = GeoProvider()
     private val authProvider = AuthProvider()
+    private val bookingProvider = BookingProvider()
 
             //Busqueda driver
     private var radius = 0.1
@@ -42,8 +48,6 @@ class SearchActivity : AppCompatActivity() {
     private var isDriverFound = false
     private var driverLatLng : LatLng? = null
     private var limitRadius = 20.0
-
-    private val bookingProvider = BookingProvider()
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -70,6 +74,57 @@ class SearchActivity : AppCompatActivity() {
         destinationLatLng = LatLng(extraDestinationLat, extraDestinationLng)
 
         getClosestDrivers()
+
+        checkIfDriverAccept()
+
+    }
+
+    private fun checkIfDriverAccept(){
+
+        listenerBooking = bookingProvider.getBooking().addSnapshotListener { snapshot, error ->
+
+            if (error != null){
+
+                Log.d("Firestore","Error: ${error.message}")
+                return@addSnapshotListener
+
+            }
+
+            if (snapshot != null && snapshot.exists()){
+
+                val booking = snapshot.toObject(Booking::class.java)
+
+                if (booking?.status == "accept"){
+
+                    listenerBooking?.remove()
+                    Toast.makeText(this@SearchActivity, "Viaje Aceptado", Toast.LENGTH_SHORT).show()
+                    goToMapTrip()
+
+                } else if (booking?.status == "cancel"){
+
+                    listenerBooking?.remove()
+                    Toast.makeText(this@SearchActivity, "Viaje Rechazado", Toast.LENGTH_SHORT).show()
+                    goToMap()
+
+                }
+
+            }
+
+        }
+
+    }
+
+    private fun goToMapTrip(){
+
+        val intent = Intent(this, MapTripActivity::class.java)
+        startActivity(intent)
+
+    }
+    private fun goToMap(){
+
+        val intent = Intent(this, MapActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        startActivity(intent)
 
     }
 
@@ -164,6 +219,11 @@ class SearchActivity : AppCompatActivity() {
 
         })
 
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        listenerBooking?.remove()
     }
 
 }

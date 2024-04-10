@@ -18,6 +18,7 @@ import com.carlostorres.uberclone.R
 import com.carlostorres.uberclone.databinding.ActivityMapBinding
 import com.carlostorres.uberclone.models.DriverLocation
 import com.carlostorres.uberclone.providers.AuthProvider
+import com.carlostorres.uberclone.providers.BookingProvider
 import com.carlostorres.uberclone.providers.GeoProvider
 import com.carlostorres.uberclone.utils.CarMoveAnim
 import com.example.easywaylocation.EasyWayLocation
@@ -58,6 +59,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, Listener {
 
     private val geoProvider = GeoProvider()
     private val authProvider = AuthProvider()
+    private val bookingProvider = BookingProvider()
 
     //GOOGLE MPLACES
     private var places : PlacesClient? = null
@@ -110,6 +112,8 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, Listener {
             goToTripInfo()
         }
 
+        removeBooking()
+
     }
 
     val locationPermissions =
@@ -151,6 +155,12 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, Listener {
         }
 
         return position
+
+    }
+
+    private fun removeBooking(){
+
+        bookingProvider.remove()
 
     }
 
