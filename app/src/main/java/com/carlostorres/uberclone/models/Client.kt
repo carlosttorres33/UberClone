@@ -13,8 +13,6 @@ data class Client (
     val image: String? = null
 ) {
 
-
-
     public fun toJson() = klaxon.toJsonString(this)
 
     companion object {

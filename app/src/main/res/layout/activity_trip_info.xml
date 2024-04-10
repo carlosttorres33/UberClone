@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -10,187 +10,225 @@
     <fragment
         android:id="@+id/map"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
         android:name="com.google.android.gms.maps.SupportMapFragment"
-        android:layout_marginBottom="300dp"
+        app:layout_constraintBottom_toTopOf="@id/flDatos"
+        app:layout_constraintTop_toTopOf="parent"
         />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="300dp"
-        android:orientation="vertical"
-        android:layout_gravity="bottom">
-
-        <LinearLayout
+        <FrameLayout
+            android:id="@+id/flDatos"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="10dp">
+            app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
+            app:layout_constraintBottom_toBottomOf="parent">
 
-            <ImageView
-                android:layout_width="25dp"
-                android:layout_height="25dp"
-                android:src="@drawable/ic_location_grey"
-                android:layout_marginHorizontal="30dp"
-                android:layout_marginTop="5dp"/>
-
-            <LinearLayout
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:layout_height="wrap_content">
 
                 <TextView
+                    android:id="@+id/tvSolicitud"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Origen"
-                    android:textSize="13sp"
-                    android:textStyle="bold"/>
+                    android:text="SOLICITUD DE VIAJE"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintBottom_toTopOf="@id/llOrigen"
+                    android:textStyle="bold"
+                    android:textSize="20sp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="5dp"/>
 
-                <TextView
-                    android:id="@+id/tvOrigin"
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:id="@+id/llOrigen"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Calle Falsa"
-                    android:maxLines="2"
-                    android:textSize="14sp"/>
+                    android:orientation="horizontal"
+                    android:layout_marginVertical="5dp"
+                    app:layout_constraintTop_toBottomOf="@id/tvSolicitud">
 
-            </LinearLayout>
+                    <ImageView
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:layout_marginHorizontal="30dp"
+                        android:layout_marginTop="5dp"
+                        android:src="@drawable/ic_location_grey" />
 
-        </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="10dp">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Origen"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
 
-            <ImageView
-                android:layout_width="25dp"
-                android:layout_height="25dp"
-                android:src="@drawable/ic_my_location_grey"
-                android:layout_marginHorizontal="30dp"
-                android:layout_marginTop="5dp"/>
+                        <TextView
+                            android:id="@+id/tvOrigin"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:maxLines="2"
+                            android:text="Calle Falsa"
+                            android:textSize="14sp" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
+                    </LinearLayout>
 
-                <TextView
-                    android:layout_width="wrap_content"
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/llDestino"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Destino"
-                    android:textSize="13sp"
-                    android:textStyle="bold"/>
+                    android:layout_marginVertical="5dp"
+                    android:orientation="horizontal"
+                    app:layout_constraintTop_toBottomOf="@id/llOrigen">
 
-                <TextView
-                    android:id="@+id/tvDestination"
-                    android:layout_width="wrap_content"
+                    <ImageView
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:layout_marginHorizontal="30dp"
+                        android:layout_marginTop="5dp"
+                        android:src="@drawable/ic_my_location_grey" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Destino"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/tvDestination"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:maxLines="2"
+                            android:text="Calle Falsa"
+                            android:textSize="14sp" />
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/llPrice"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Calle Falsa"
-                    android:maxLines="2"
-                    android:textSize="14sp"/>
+                    android:orientation="horizontal"
+                    android:layout_marginVertical="5dp"
+                    app:layout_constraintTop_toBottomOf="@id/llDestino">
 
-            </LinearLayout>
+                    <ImageView
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:layout_marginHorizontal="30dp"
+                        android:layout_marginTop="5dp"
+                        android:src="@drawable/baseline_timer_24" />
 
-        </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="10dp">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Tiempo y Distancia"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
 
-            <ImageView
-                android:layout_width="25dp"
-                android:layout_height="25dp"
-                android:src="@drawable/baseline_timer_24"
-                android:layout_marginHorizontal="30dp"
-                android:layout_marginTop="5dp"/>
+                        <TextView
+                            android:id="@+id/tvTimeAndDistance"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:maxLines="2"
+                            android:text="0:00"
+                            android:textSize="14sp" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
+                    </LinearLayout>
 
-                <TextView
-                    android:layout_width="wrap_content"
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/llTimeAndDistance"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Tiempo y Distancia"
-                    android:textSize="13sp"
-                    android:textStyle="bold"/>
+                    android:orientation="horizontal"
+                    android:layout_marginVertical="5dp"
+                    app:layout_constraintTop_toBottomOf="@id/llPrice">
 
-                <TextView
-                    android:id="@+id/tvTimeAndDistance"
-                    android:layout_width="wrap_content"
+                    <ImageView
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:src="@drawable/baseline_attach_money_24"
+                        android:layout_marginHorizontal="30dp"
+                        android:layout_marginTop="5dp"/>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Precio"
+                            android:textSize="13sp"
+                            android:textStyle="bold"/>
+
+                        <TextView
+                            android:id="@+id/tvPrice"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="$0"
+                            android:maxLines="2"
+                            android:textSize="14sp"/>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <Button
+                    android:id="@+id/btnConfirmRequest"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="0:00"
-                    android:maxLines="2"
-                    android:textSize="14sp"/>
+                    android:layout_weight="1"
+                    android:background="@drawable/rounded_button"
+                    android:text="Aceptar"
+                    android:textColor="@color/black"
+                    android:layout_marginHorizontal="40dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/llTimeAndDistance"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="25dp"
+                    />
 
-            </LinearLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
-        </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="10dp">
-
-            <ImageView
-                android:layout_width="25dp"
-                android:layout_height="25dp"
-                android:src="@drawable/baseline_attach_money_24"
-                android:layout_marginHorizontal="30dp"
-                android:layout_marginTop="5dp"/>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Precio"
-                    android:textSize="13sp"
-                    android:textStyle="bold"/>
-
-                <TextView
-                    android:id="@+id/tvPrice"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="$0"
-                    android:maxLines="2"
-                    android:textSize="14sp"/>
-
-            </LinearLayout>
-
-        </LinearLayout>
-
-    </LinearLayout>
-
-    <Button
-        android:id="@+id/btnConfirmRequest"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Confirmar Viaje"
-        android:textColor="@color/black"
-        android:background="@drawable/rounded_button"
-        android:layout_gravity="bottom"
-        android:layout_marginBottom="50dp"
-        android:layout_marginHorizontal="60dp"/>
+        </FrameLayout>
 
     <ImageView
         android:id="@+id/ivBack"
         android:layout_width="35dp"
         android:layout_height="35dp"
         android:src="@drawable/ic_arrow_back"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         android:layout_marginTop="50dp"
-        android:layout_marginLeft="15dp"/>
+        android:layout_marginLeft="15dp" />
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
 
 
 
