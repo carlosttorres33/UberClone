@@ -56,6 +56,9 @@ class TripInfoActivity : AppCompatActivity(), OnMapReadyCallback, Listener, Dire
 
     private var configProvider = ConfigProvider()
 
+    var distance = 0.0
+    var time = 0.0
+
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
@@ -117,6 +120,8 @@ class TripInfoActivity : AppCompatActivity(), OnMapReadyCallback, Listener, Dire
             intent.putExtra("origin_lng", originLatLng?.longitude)
             intent.putExtra("destination_lat", destinationLatLng?.latitude)
             intent.putExtra("destination_lng", destinationLatLng?.longitude)
+            intent.putExtra("time", time)
+            intent.putExtra("distance", distance)
 
             startActivity(intent)
 
@@ -248,8 +253,8 @@ class TripInfoActivity : AppCompatActivity(), OnMapReadyCallback, Listener, Dire
         polyLineDetailsArray: ArrayList<PolyLineDataBean>
     ) {
 
-        var distance = polyLineDetailsArray[1].distance.toDouble() //Mts
-        var time = polyLineDetailsArray[1].time.toDouble()  //Seg
+        distance = polyLineDetailsArray[1].distance.toDouble() //Mts
+        time = polyLineDetailsArray[1].time.toDouble()  //Seg
 
         distance = if (distance < 1000.0) 1000.0 else distance   //Si es menos de 1km se pone por defecto de 1km
         time = if (time < 60.0) 60.0 else time
